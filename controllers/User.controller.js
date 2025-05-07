@@ -102,6 +102,7 @@ module.exports.loginUser = async (req, res, next) => {
             const token = jwt.sign({ Email: Email, userId: user.userId }, process.env.JWT_SECRET);
             res.cookie('token', token, {
                 httpOnly: true,
+                sameSite:'none',
                 expires: new Date(Date.now() + 3600000 * 24 * 30) // 30 days
             });
             res.status(200).json({ msg: 'user found ',token:token,user });
