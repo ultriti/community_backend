@@ -23,7 +23,6 @@ console.log('-->',process.env.cors_frontend);
 connect_DB();
 app.use(cors({
     credentials: true,
-    // origin: `${process.env.cors_frontend}` // Replace with your frontend URL
     origin: process.env.cors_frontend // Replace with your frontend URL
 }));
 
