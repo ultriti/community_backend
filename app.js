@@ -40,7 +40,6 @@ app.get('/', (req, res) => {
 });
 
 
-
 app.use('/users',userRoutes);
 app.use('/users/thoughts',userRoutes);
 app.use('/users/message',message);

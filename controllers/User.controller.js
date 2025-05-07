@@ -52,6 +52,7 @@ module.exports.registerUser = async (req, res, next) => {
             res.cookie('token', token, {
                 httpOnly: true,
                 sameSite:'none',
+                secure:true,
                 expires: new Date(Date.now() + 3600000 * 24 * 30) // 30 days
             });
             res.status(200).json({ msg: 'user created successfully',user,token:token});
@@ -103,6 +104,7 @@ module.exports.loginUser = async (req, res, next) => {
             res.cookie('token', token, {
                 httpOnly: true,
                 sameSite:'none',
+                secure:true,
                 expires: new Date(Date.now() + 3600000 * 24 * 30) // 30 days
             });
             res.status(200).json({ msg: 'user found ',token:token,user });
@@ -209,6 +211,7 @@ module.exports.editUserProfile = async (req,res) =>{
 
 module.exports.getSuggestedUsers = async (req, res) => {
     try {
+        console.log("token cookies",res.cookie.token);
         
         const suggestedUsers = await userModel.find({_id:{$ne:req.id}}).select("-Password");
         const admin_id = await userModel.findById(req.id).select("-password");

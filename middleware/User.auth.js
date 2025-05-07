@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 
 module.exports.isAunthenticate = (req, res, next) =>{
    
+   
    try {
      const token = req.cookies.token || localStorage.getItem('token_c');
      
