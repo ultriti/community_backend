@@ -4,10 +4,13 @@ const cookieParser = require('cookie-parser');
 
 
 module.exports.isAunthenticate = (req, res, next) =>{
-   
+
    
    try {
-     const token = req.cookies.token || localStorage.getItem('token_c');
+     const token = req.cookies.token;
+     console.log('cookies',req.cookies.token);
+     console.log('cookies --',token);
+     
      
 
      if(!token){
