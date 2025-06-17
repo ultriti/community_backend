@@ -18,9 +18,6 @@ const PORT = process.env.PORT || 3000;
 
 // const app = express(); use app from socket
 
-// app.use(upload.single('profilePicture'));
-
-console.log('-->',process.env.cors_frontend);
 
 connect_DB();
 app.use(cors({
