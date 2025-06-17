@@ -1,6 +1,7 @@
 const conversationModel = require("../models/conversation.model.js");
 const messageModel = require("../models/message.model.js");
-const  {getReceiverSocketId, io}  = require("../socket/socket.js");
+const userModel = require("../models/user.model.js");
+const { getReceiverSocketId, io } = require("../socket/socket.js");
 
 module.exports.SendMessage = async (req, res) => {
     try {
@@ -8,7 +9,7 @@ module.exports.SendMessage = async (req, res) => {
         const receiverId = req.params.id;
         const { message } = req.body;
 
-        
+
 
         let conversation = await conversationModel.findOne({
             participants: { $all: [senderId, receiverId] }
@@ -37,13 +38,13 @@ module.exports.SendMessage = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            newMessage:newMessage
+            newMessage: newMessage
         })
 
     } catch (error) {
-        res.status(400).json({message:"something went wrong"})
+        res.status(400).json({ message: "something went wrong" })
         console.log(error);
-        
+
     }
 }
 
@@ -53,18 +54,61 @@ module.exports.getMessage = async (req, res) => {
         const senderId = req.id;
         const receiverId = req.params.id;
         const conversation = await conversationModel.findOne({
-            participants:{$all:[senderId,receiverId]}
+            participants: { $all: [senderId, receiverId] }
         }).populate('messages');
-        if(!conversation){
-            return res.status(200).json({success:true,messages:[]})
+        if (!conversation) {
+            return res.status(200).json({ success: true, messages: [] })
         }
-            
-        return res.status(200).json({success:true,messages:conversation?.messages,msg:"esadadsa"})
+
+        return res.status(200).json({ success: true, messages: conversation?.messages, msg: "esadadsa" })
 
 
     } catch (error) {
-        res.status(400).json({message:"something went wrong fetching messages"})
+        res.status(400).json({ message: "something went wrong fetching messages" })
         console.log(error);
     }
 
 }
+
+
+module.exports.getMessagingUser = async (req, res) => {
+
+    const adminId = req.id;
+    try {
+        console.log('admi id : ->', adminId);
+
+
+        const conversations = await conversationModel.find({ participants: adminId }).lean();
+
+        const userIds = conversations.flatMap(conv =>
+            conv.participants.filter(user => user.toString() !== adminId)
+        );
+        const userDetails = await Promise.all(userIds.map(userId => userModel.findById(userId).lean()));
+        console.log("--> User details texting \n:", userDetails);
+
+
+        // users wiyhout texing admin
+        const allUsers = await userModel.find().limit(15).lean();
+
+        // Extract IDs of users who have interacted
+        const interactedUserIds = new Set([
+            adminId.toString(),
+            ...userDetails.map(user => user._id.toString())
+        ]);
+
+        // Filter users who are NOT in interactedUserIds
+        const nonInteractingUserIds = allUsers
+            .filter(user => !interactedUserIds.has(user._id.toString()))
+            .map(user => user);
+
+        console.log('--> User IDs without interaction:', nonInteractingUserIds);
+
+
+        res.status(200).json({ message: "user found", allMessagingUsers: userDetails, allNonmessagingUsers: nonInteractingUserIds, success: true });
+
+    } catch (error) {
+        return res.status(400).status({ error: "internal error", success: false })
+    }
+
+}
+

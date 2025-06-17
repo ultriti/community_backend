@@ -8,11 +8,13 @@ const message = require('./routes/Message.routes.js')
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); // Set the destination directory for uploaded files
 const {server,app,io} = require('./socket/socket.js')
+// const path = require('path');
 
 
 dotenv.config(); // Load environment variables from.env file
 
 const PORT = process.env.PORT || 3000;
+
 
 // const app = express(); use app from socket
 
@@ -30,8 +32,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-console.log(require("cookie-parser"));
-console.log('---->');
 
 
 
@@ -40,9 +40,12 @@ app.get('/', (req, res) => {
 });
 
 
+console.log(require("cookie-parser"));
+
 app.use('/users',userRoutes);
 app.use('/users/thoughts',userRoutes);
 app.use('/users/message',message);
+
 
 server.listen(PORT, (req, res) => {
     console.log(`Server is running on port ${PORT}`);

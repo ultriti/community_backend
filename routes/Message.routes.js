@@ -6,6 +6,8 @@ const { isAunthenticate } = require('../middleware/User.auth');
 
 router.post('/sendMessage/:id',isAunthenticate,messageContoller.SendMessage);
 router.get('/getMessage/:id',isAunthenticate,messageContoller.getMessage);
+router.get('/getTextingUsers',isAunthenticate,messageContoller.getMessagingUser);
+
 
 
 module.exports = router;
