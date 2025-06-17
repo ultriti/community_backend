@@ -236,7 +236,11 @@ module.exports.getSuggestedUsers = async (req, res) => {
         if (!suggestedUsers) {
             res.status(404).json({ error: "current user not found" })
         };
-        return res.status(200).json({ msg: "suggested users", filteredUser, admin_id, succes: true });
+        const tokendata = {
+            token : req.cookies.token,
+            _id : req.id
+        }
+        return res.status(200).json({ msg: "suggested users", filteredUser, admin_id, succes: true, tokendata: tokendata });
     }
 
     catch (error) {
