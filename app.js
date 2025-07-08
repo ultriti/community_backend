@@ -22,7 +22,8 @@ const PORT = process.env.PORT || 3000;
 connect_DB();
 app.use(cors({
     credentials: true,
-    origin: process.env.cors_frontend // Replace with your frontend URL
+    origin: process.env.cors_frontend, // Replace with your frontend URL
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());

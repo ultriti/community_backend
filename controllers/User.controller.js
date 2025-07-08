@@ -53,7 +53,8 @@ module.exports.registerUser = async (req, res, next) => {
                 httpOnly: true,
                 expires: new Date(Date.now() + 3600000 * 24 * 30), // 30 days
                 secure: true, // Set to false if testing locally
-                sameSite: 'None'
+                sameSite: 'None',
+                origin: 'https://communichat.ultriti.com',
             });
             res.status(200).json({ msg: 'user created successfully', user, token: token });
         }
@@ -110,7 +111,8 @@ module.exports.loginUser = async (req, res, next) => {
                     httpOnly: true,
                     expires: new Date(Date.now() + 3600000 * 24 * 30), // 30 days
                     secure: true, // Set to false if testing locally
-                    sameSite: 'None'
+                    sameSite: 'None',
+                    origin: 'https://communichat.ultriti.com',
                 });
                 res.status(200).json({ msg: 'user found ', token: token, user });
             };
