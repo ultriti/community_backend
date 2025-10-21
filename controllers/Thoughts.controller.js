@@ -7,6 +7,10 @@ module.exports.createThoughts = async (req, res) => {
         
         const thoughts_msg = req.body.thoughts;
         const userId = req.id;
+
+        console.log('-----> thoughts',thoughts_msg);
+        
+
         if (!thoughts_msg) {
             return res.status(400).json({ errors: [{ msg: 'thought is required' }] });
         }

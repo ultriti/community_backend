@@ -51,10 +51,7 @@ module.exports.registerUser = async (req, res, next) => {
             const token = jwt.sign({ Email: Email, userId: user.userId }, process.env.JWT_SECRET);
             res.cookie('token', token, {
                 httpOnly: true,
-                expires: new Date(Date.now() + 3600000 * 24 * 30), // 30 days
-                secure: true, // Set to false if testing locally
-                sameSite: 'None',
-                origin: 'https://communichat.ultriti.com',
+                expires: new Date(Date.now() + 3600000 * 24 * 30) // 30 days
             });
             res.status(200).json({ msg: 'user created successfully', user, token: token });
         }
@@ -109,10 +106,7 @@ module.exports.loginUser = async (req, res, next) => {
                 const token = jwt.sign({ Email: Email, userId: user.userId }, process.env.JWT_SECRET);
                 res.cookie('token', token, {
                     httpOnly: true,
-                    expires: new Date(Date.now() + 3600000 * 24 * 30), // 30 days
-                    secure: true, // Set to false if testing locally
-                    sameSite: 'None',
-                    origin: 'https://communichat.ultriti.com',
+                    expires: new Date(Date.now() + 3600000 * 24 * 30) // 30 days
                 });
                 res.status(200).json({ msg: 'user found ', token: token, user });
             };
@@ -233,7 +227,7 @@ module.exports.getSuggestedUsers = async (req, res) => {
         ]);
 
         console.log('---->', suggestedUsers);
-
+        
 
         const filteredUser = suggestedUsers.filter(user => user._id.toString() !== admin_id._id.toString());
         if (filteredUser.length === 0) {
@@ -243,8 +237,8 @@ module.exports.getSuggestedUsers = async (req, res) => {
             res.status(404).json({ error: "current user not found" })
         };
         const tokendata = {
-            token: req.cookies.token,
-            _id: req.id
+            token : req.cookies.token,
+            _id : req.id
         }
         return res.status(200).json({ msg: "suggested users", filteredUser, admin_id, succes: true, tokendata: tokendata });
     }

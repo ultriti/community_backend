@@ -18,16 +18,14 @@ const PORT = process.env.PORT || 3000;
 
 // const app = express(); use app from socket
 
+// app.use(upload.single('profilePicture'));
+
+console.log('-->',process.env.cors_frontend);
 
 connect_DB();
 app.use(cors({
     credentials: true,
-    origin: [
-        process.env.cors_frontend,
-        process.env.cors_frontend2
-
-    ], // Replace with your frontend URL
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: process.env.cors_frontend // Replace with your frontend URL
 }));
 
 app.use(express.json());
