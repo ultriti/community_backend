@@ -23,10 +23,12 @@ const PORT = process.env.PORT || 3000;
 console.log('-->',process.env.cors_frontend);
 
 connect_DB();
-app.use(cors({
-    credentials: true,
-    origin: process.env.cors_frontend // Replace with your frontend URL
-}));
+app.use(cors(
+    {
+        origin: [process.env.FRONTEND_URL,process.env.FRONTEND_URL_2],
+        credentials: true,
+    }
+))
 
 app.use(express.json());
 app.use(cookieParser());
