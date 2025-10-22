@@ -77,13 +77,9 @@ module.exports.loginUser = async (req, res, next) => {
         };
         const user_data = await userModel.findOne({ Email: Email }).select("+Password");
         if (!user_data) {
-            console.log('user not found ');
-
             return res.status(400).json({ message: 'invalid email or password' });
         }
         else {
-            console.log('password');
-
             const isMatch_password = await user_data.comparePassword(Password, user_data.Password);
 
             if (!isMatch_password) {
@@ -214,8 +210,6 @@ module.exports.editUserProfile = async (req, res) => {
 module.exports.getSuggestedUsers = async (req, res) => {
     try {
         const admin_id = await userModel.findById(req.id).select("-password");
-        console.log('--> wihtout admin id', req.id);
-
 
         const page = 1, limit = 5
         const skip = (page - 1) * limit;
@@ -225,9 +219,7 @@ module.exports.getSuggestedUsers = async (req, res) => {
             { $sample: { size: 5 } }, // Random selection of 5 users
             { $project: { Password: 0 } } // Exclude password field
         ]);
-
-        console.log('---->', suggestedUsers);
-        
+      
 
         const filteredUser = suggestedUsers.filter(user => user._id.toString() !== admin_id._id.toString());
         if (filteredUser.length === 0) {

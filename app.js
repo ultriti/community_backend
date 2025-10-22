@@ -2,53 +2,40 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const connect_DB = require('./mongodb/db.js');
-const userRoutes = require('./routes/User.routes.js')
-const message = require('./routes/Message.routes.js')
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Set the destination directory for uploaded files
-const {server,app,io} = require('./socket/socket.js')
-// const path = require('path');
+const connect_DB = require('./mongodb/db.js');
+const userRoutes = require('./routes/User.routes.js');
+const messageRoutes = require('./routes/Message.routes.js');
+const { server, app } = require('./socket/socket.js');
 
-
-dotenv.config(); // Load environment variables from.env file
+dotenv.config(); // Load environment variables
 
 const PORT = process.env.PORT || 3000;
+const upload = multer({ dest: 'uploads/' }); // Optional: for file uploads
 
-
-// const app = express(); use app from socket
-
-// app.use(upload.single('profilePicture'));
-
-console.log('-->',process.env.cors_frontend);
-
+// 🧠 Connect to MongoDB
 connect_DB();
-app.use(cors(
-    {
-        origin: [process.env.FRONTEND_URL,process.env.FRONTEND_URL_2],
-        credentials: true,
-    }
-))
+
+// 🌐 CORS for REST API
+app.use(cors({
+  credentials: true,
+  origin: process.env.CORS_FRONTEND || 'http://localhost:5173'
+}));
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-
-
-
+// ✅ Routes
 app.get('/', (req, res) => {
-    res.json({ message: 'Welcome to the API!' });
+  res.json({ message: 'Welcome to the API!' });
 });
 
+app.use('/users', userRoutes);
+app.use('/users/thoughts', userRoutes);
+app.use('/users/message', messageRoutes);
 
-console.log(require("cookie-parser"));
-
-app.use('/users',userRoutes);
-app.use('/users/thoughts',userRoutes);
-app.use('/users/message',message);
-
-
-server.listen(PORT, (req, res) => {
-    console.log(`Server is running on port ${PORT}`);
-})
+// 🚀 Start Server
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

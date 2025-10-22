@@ -3,7 +3,7 @@ const postModel = require("../models/post.model");
 const userModel = require('../models/user.model');
 const postService = require('../services/Post.service');
 const { validationResult } = require('express-validator');
-const { getReceiverSocketId,io } = require("../socket/socket");
+const { getReceiverSocketId, io } = require("../socket/socket");
 const cloudinary = require('cloudinary').v2;
 
 
@@ -120,13 +120,15 @@ module.exports.get_admin_uploads = async (req, res) => {
 }
 
 module.exports.get_all_uploads = async (req, res) => {
-  const {limit} = req.query;
+  const { limit } = req.query;
   const adminId = req.id;
   const page = req.query.page || 1;
 
+
+
   try {
-    const startIndex = (parseInt(page) -1) * parseInt(limit);
-    
+    const startIndex = (parseInt(page) - 1) * parseInt(limit);
+
     const posts = await postModel.find()
       .sort({ createdAt: -1 })
       .skip(startIndex)
@@ -167,17 +169,21 @@ module.exports.uploads_likes = async (req, res) => {
 
     const user = await userModel.findById(admin_id).select('Username profilePic');
     const postOwnerId = uploads_details.author.toString();
-    if(postOwnerId != admin_id){
+    if (postOwnerId != admin_id) {
       // emit socket io notification event
       const notification = {
-        type:'dislike',
-        userId:admin_id,
-        userDetails:user,
-        PostId :id,
-        message:"your post was liked"
+        type: 'dislike',
+        userId: admin_id,
+        Upload_url:uploads_details.uploads,
+        userDetails: user,
+        PostId: id,
+        message: "your post was liked by "
       }
+
+      console.log('notification',notification);
+      
       const postOwnerSocketId = getReceiverSocketId(postOwnerId);
-      io.to(postOwnerSocketId).emit('notification',notification);
+      io.to(postOwnerSocketId).emit('notification', notification);
     }
 
     return res.status(200).json({ msg: "user unliked", isLiked_uploads });
@@ -189,17 +195,18 @@ module.exports.uploads_likes = async (req, res) => {
     // implement socket io
     const user = await userModel.findById(admin_id).select('Username profilePic');
     const postOwnerId = uploads_details.author.toString();
-    if(postOwnerId != admin_id){
+    if (postOwnerId != admin_id) {
       // emit socket io notification event
       const notification = {
-        type:'like',
-        userId:admin_id,
-        userDetails:user,
-        PostId :id,
-        message:"your post was liked"
+        type: 'like',
+        userId: admin_id,
+        Upload_url:uploads_details.uploads,
+        userDetails: user,
+        PostId: id,
+        message: "your post was liked"
       }
       const postOwnerSocketId = getReceiverSocketId(postOwnerId);
-      io.to(postOwnerSocketId).emit('notification',notification);
+      io.to(postOwnerSocketId).emit('notification', notification);
     }
 
     return res.status(200).json({ msg: "user liked", isLiked_uploads });
@@ -276,21 +283,21 @@ module.exports.get_all_comments = async (req, res) => {
   res.status(200).json({ msg: 'all comments', uploads_details })
 }
 
-module.exports.get_searched_files = async (req,res) =>{
+module.exports.get_searched_files = async (req, res) => {
   const admin_id = req.id;
-  const {Username,uploads,limit} = req.query;
+  const { Username, uploads, limit } = req.query;
 
 
   const apiData = {};
 
-  if(Username) {
-    apiData.Username = {$regex: Username, $options: 'i'};
+  if (Username) {
+    apiData.Username = { $regex: Username, $options: 'i' };
   }
 
   const find_username = await userModel.find(apiData).select('Username  profilePic Fullname').limit(parseInt(limit));
 
-  res.status(200).json({msg:'username founf',find_username})
-  
+  res.status(200).json({ msg: 'username founf', find_username })
+
 
 
 

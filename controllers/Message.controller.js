@@ -9,8 +9,6 @@ module.exports.SendMessage = async (req, res) => {
         const receiverId = req.params.id;
         const { message } = req.body;
 
-
-
         let conversation = await conversationModel.findOne({
             participants: { $all: [senderId, receiverId] }
         })
@@ -75,7 +73,6 @@ module.exports.getMessagingUser = async (req, res) => {
 
     const adminId = req.id;
     try {
-        console.log('admi id : ->', adminId);
 
 
         const conversations = await conversationModel.find({ participants: adminId }).lean();
@@ -83,8 +80,20 @@ module.exports.getMessagingUser = async (req, res) => {
         const userIds = conversations.flatMap(conv =>
             conv.participants.filter(user => user.toString() !== adminId)
         );
-        const userDetails = await Promise.all(userIds.map(userId => userModel.findById(userId).lean()));
-        console.log("--> User details texting \n:", userDetails);
+
+
+        const userDetails = await Promise.allSettled(
+            userIds.map(userId => userModel.findById(userId).lean())
+        );
+        const results = await Promise.allSettled(
+            userIds.map(userId => userModel.findById(userId).lean())
+        );
+
+
+        const successfulResults = results
+            .filter(result => result.status === 'fulfilled' && result.value !== null)
+            .map(result => result.value);
+
 
 
         // users wiyhout texing admin
@@ -93,7 +102,7 @@ module.exports.getMessagingUser = async (req, res) => {
         // Extract IDs of users who have interacted
         const interactedUserIds = new Set([
             adminId.toString(),
-            ...userDetails.map(user => user._id.toString())
+            ...successfulResults.map(user => user._id.toString())
         ]);
 
         // Filter users who are NOT in interactedUserIds
@@ -101,10 +110,9 @@ module.exports.getMessagingUser = async (req, res) => {
             .filter(user => !interactedUserIds.has(user._id.toString()))
             .map(user => user);
 
-        console.log('--> User IDs without interaction:', nonInteractingUserIds);
 
 
-        res.status(200).json({ message: "user found", allMessagingUsers: userDetails, allNonmessagingUsers: nonInteractingUserIds, success: true });
+        res.status(200).json({ message: "user found", allMessagingUsers: successfulResults, allNonmessagingUsers: nonInteractingUserIds, success: true });
 
     } catch (error) {
         return res.status(400).status({ error: "internal error", success: false })

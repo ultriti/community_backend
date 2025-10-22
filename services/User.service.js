@@ -17,9 +17,7 @@ module.exports.createUser = async ({
       Email,
       Password,
       // profile_picture_id:'default_propile_pic'
-  
     });
-  
   
     return user;
   };

@@ -9,8 +9,6 @@ module.exports.create_thoughts = async ({
     if(!thought || !userId){
         throw new Error('All fields are required');
     }
-    console.log('----------------> serviecs',thought,
-        userId);
     
   
     const thoughts_data =await thoughtsModel.create({

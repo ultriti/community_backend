@@ -14,10 +14,10 @@ const thoughtsSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  } 
 });
 
 // TTL index: delete document 2 minutes (120 seconds) after creation
-thoughtsSchema.index({ createdAt: 1 }, { expireAfterSeconds: 604800 });
+thoughtsSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
 const thoughtsModel = mongoose.model('Thoughts', thoughtsSchema);
 module.exports = thoughtsModel;
