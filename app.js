@@ -17,12 +17,11 @@ const upload = multer({ dest: 'uploads/' }); // Optional: for file uploads
 connect_DB();
 
 // 🌐 CORS for REST API
-
 app.use(cors(
-    {
-        origin: [process.env.FRONTEND_URL,process.env.FRONTEND_URL_2],
-        credentials: true,
-    }
+  {
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2],
+    credentials: true,
+  }
 ))
 
 app.use(express.json());

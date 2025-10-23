@@ -8,8 +8,8 @@ const server = http.createServer(app);
 // 🌐 Dynamic CORS origin setup
 const isDev = process.env.NODE_ENV !== 'production';
 const allowedOrigins = isDev
-  ? ['http://localhost:5173']
-  : ['https://communichat.ultriti.com'];
+  ? [`${process.env.cors_frontend}`]
+  : [`${process.env.cors_frontend_2}`];
 
 const io = new Server(server, {
   cors: {
