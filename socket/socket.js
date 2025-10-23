@@ -8,8 +8,8 @@ const server = http.createServer(app);
 // 🌐 Dynamic CORS origin setup
 const isDev = process.env.NODE_ENV !== 'production';
 const allowedOrigins = isDev
-  ? [`${process.env.cors_frontend}`]
-  : [`${process.env.cors_frontend_2}`];
+  ? [`${process.env.cors_frontend}`,`${process.env.VITE_BASE_URL}`]
+  : [`${process.env.cors_frontend_2}`,`${process.env.VITE_BASE_URL}`];
 
 const io = new Server(server, {
   cors: {
