@@ -19,7 +19,7 @@ connect_DB();
 // 🌐 CORS for REST API
 app.use(cors(
   {
-    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2, process.env.VITE_BASE_URL],
+    origin: [process.env.cors_frontend, process.env.cors_frontend_2],
     credentials: true,
   }
 ))

@@ -28,9 +28,13 @@ module.exports.SendMessage = async (req, res) => {
             await Promise.all([conversation.save(), newMessage.save()])
         }
 
+        console.log('receiverSocketId', receiverId);
+
         // implement socket io for real time data
         const receiverSocketId = getReceiverSocketId(receiverId)
+
         if (receiverSocketId) {
+            console.log('receiverSocketId', receiverSocketId);
             io.to(receiverSocketId).emit('newMessage', newMessage)
         }
 
@@ -73,10 +77,7 @@ module.exports.getMessagingUser = async (req, res) => {
 
     const adminId = req.id;
     try {
-
-
         const conversations = await conversationModel.find({ participants: adminId }).lean();
-
         const userIds = conversations.flatMap(conv =>
             conv.participants.filter(user => user.toString() !== adminId)
         );
