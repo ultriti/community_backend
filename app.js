@@ -37,6 +37,10 @@ app.use('/users', userRoutes);
 app.use('/users/thoughts', userRoutes);
 app.use('/users/message', messageRoutes);
 
+app.get('/ping', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // 🚀 Start Server
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

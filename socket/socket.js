@@ -41,9 +41,6 @@ const getReceiverSocketId = (receiverId) => {
 };
 
 io.on('connection', (socket) => {
-  console.log('🧠 Full handshake headers:', socket.handshake.headers);
-  console.log('🧠 Full handshake query:', socket.handshake.query);
-
   const userId = socket.handshake.query.userId;
   console.log(`🔌 User connected: ${userId} → ${socket.id}`);
 
@@ -61,14 +58,13 @@ io.on('connection', (socket) => {
     io.emit('getOnlineUser', Object.keys(userSocketMap));
   });
 
+  // Example custom event
   socket.on('sendMessage', ({ receiverId, message }) => {
-    console.log(`📨 Message from ${userId} to ${receiverId}: ${message}`);
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('receiveMessage', { senderId: userId, message });
     }
   });
 });
-
 
 module.exports = { server, app, io, getReceiverSocketId };
